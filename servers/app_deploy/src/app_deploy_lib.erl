@@ -50,7 +50,13 @@ load_start_app(Node,Application)->
 		    load_modules(Node,Modules_Filenames),		    
 		    {ok,Binary}=file:read_file(AppFullFilename),
 		    ok=rpc:call(Node,file,write_file,[AppFilename,Binary],5000),
-		    Reply=rpc:call(Node,application,start,[Application]);
+		    case rpc:call(Node,application,start,[Application]) of
+			ok->
+			    Reply=ok,
+			    rpc:eval_everywhere(app_discovery,update_app_lists,[]);
+			Err->
+			    Reply={error,[?MODULE,?LINE,date(),time(),Err,Application]}
+		    end;    
 		true->
 		    Reply={error,[?MODULE,?LINE,date(),time(),'already_loaded_started',Application]}
 	    end
@@ -78,7 +84,8 @@ stop_unload_app(Node,Application)->
 	    rpc:call(Node,application,unload,[Application]),
 	    rpc:call(Node,file,delete,[AppFilename]),
 	    unload_modules(Node,Modules),
-	    Reply=ok;
+	    Reply=ok,
+	    rpc:eval_everywhere(app_discovery,update_app_lists,[]);
 	false ->
 	    Reply={error,['eexist',Application]}
     end,

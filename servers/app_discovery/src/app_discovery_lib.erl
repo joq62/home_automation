@@ -32,7 +32,6 @@
 %% --------------------------------------------------------------------
 sync(Interval)->
     {NodeAppList,AppNodesList}=check_apps(),
-    spawn(app_discovery,tick,[Interval]),
     {NodeAppList,AppNodesList}.
 
 
@@ -42,6 +41,10 @@ check_apps()->
     AppNodesList=app_nodes_list(NodeAppList,[]),
     {NodeAppList,AppNodesList}.
 
+
+tick(Interval)->
+    timer:sleep(Interval),
+    app_discovery:sync(Interval).
 %% --------------------------------------------------------------------
 %% Function: 
 %% Description:

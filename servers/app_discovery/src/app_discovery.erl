@@ -30,6 +30,7 @@
 
 
 -export([ query/1,
+	  update_app_lists/0,
 	  all_apps/0,
 	  sync/1,
 	  tick/1
@@ -64,6 +65,9 @@ query(App)->
 all_apps()->
     gen_server:call(?MODULE, {all_apps},50000).
 %%----------Cast-------------------------------------------------------------
+update_app_lists()->
+    gen_server:cast(?MODULE, {update_app_lists}).    
+
 sync(Interval)->
     gen_server:cast(?MODULE, {sync,Interval}).    
 
@@ -82,7 +86,7 @@ sync(Interval)->
 %% --------------------------------------------------------------------
 init([]) ->
     {NodeAppList,AppNodesList}=rpc:call(node(),app_discovery_lib,sync,[?SYNC_INTERVAL],5000),
-    io:format("Started ~p~n",[{date(),time(),?MODULE}]),
+  %  io:format("Started ~p~n",[{date(),time(),?MODULE}]),
     {ok, #state{node_apps_list=NodeAppList,app_nodes_list=AppNodesList}}.   
     
 %% --------------------------------------------------------------------
@@ -97,7 +101,8 @@ init([]) ->
 %% --------------------------------------------------------------------
 
 handle_call({query,WantedApp}, _From, State) ->
-   {NodeAppList,AppNodesList}=app_discovery_lib:check_apps(),
+ %  {NodeAppList,AppNodesList}=app_discovery_lib:check_apps(),
+    AppNodesList=State#state.app_nodes_list,
     Reply=[Node||{App,Node}<-AppNodesList,WantedApp==App],
     {reply, Reply, State};
 
@@ -121,6 +126,12 @@ handle_call(Request, From, State) ->
 %%          {noreply, State, Timeout} |
 %%          {stop, Reason, State}            (terminate/2 is called)
 %% --------------------------------------------------------------------
+handle_cast({update_app_lists},State) ->
+    {NodeAppList,AppNodesList}=rpc:call(node(),app_discovery_lib,check_apps,[],5000),
+    NewState=State#state{node_apps_list=NodeAppList,app_nodes_list=AppNodesList},
+    spawn(app_discovery_lib,tick,[Interval]),
+    {noreply, NewState};
+
 handle_cast({sync,Interval},State) ->
     {NodeAppList,AppNodesList}=rpc:call(node(),app_discovery_lib,sync,[Interval],5000),
     NewState=State#state{node_apps_list=NodeAppList,app_nodes_list=AppNodesList},
@@ -166,9 +177,7 @@ code_change(_OldVsn, State, _Extra) ->
 %% Description:
 %% Returns: non
 %% --------------------------------------------------------------------
-tick(Interval)->
-    timer:sleep(Interval),
-    app_discovery:sync(Interval).
+
     
     
 

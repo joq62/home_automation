@@ -1,0 +1,5 @@
+
+test_controller_eunit:connect_test().
+test_controller_eunit:init_test().
+test_controller_eunit:controller_alg_test().
+
