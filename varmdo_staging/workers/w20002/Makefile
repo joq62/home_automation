@@ -1,0 +1,7 @@
+all:
+	ok
+b_test:
+	erl -pa ebin -name w20002@varmdo.asuscomm.com -setcookie change -kernel inet_dist_listen_min 20002 inet_dist_listen_max 20002
+test:
+	rm *.app
+	erl -pa ebin -name w20002@varmdo.asuscomm.com -setcookie change -kernel inet_dist_listen_min 20002 inet_dist_listen_max 20002

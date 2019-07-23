@@ -1,0 +1,3 @@
+{app_discovery,all}.
+{adder,any}.
+{tick,['w20004@varmdo.asuscomm.com']}.

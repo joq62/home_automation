@@ -1,0 +1,8 @@
+
+net_adm:ping('w20002@varmdo.asuscomm.com').
+net_adm:ping('w20004@varmdo.asuscomm.com').
+app_discovery:start().
+
+app_discovery:all_apps().
+app_discovery:query(glurk).
+    
