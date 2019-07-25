@@ -1,0 +1,15 @@
+%% This is the application resource file (.app file) for the 'base'
+%% application.
+{application, system_controller,
+[{description, "system_controller" },
+{vsn, "1.0.0" },
+{modules, 
+	  [system_controller_app,system_controller_sup,
+	   controller,controller_lib,
+	   app_discovery,app_discovery_lib,
+	   app_deploy,app_deploy_lib]},
+{registered,[controller,app_discovery,app_deploy]},
+{applications, [kernel,stdlib]},
+{mod, {system_controller_app,[]}},
+{start_phases, []}
+]}.

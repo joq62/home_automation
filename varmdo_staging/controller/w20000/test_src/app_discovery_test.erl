@@ -29,22 +29,13 @@
 %% --------------------------------------------------------------------
 
 t1()->
-    A=app_discovery:all_apps(),
-    io:format("~p~n",[{?MODULE,?LINE,A}]),
-    A=  [{'controller@varmdo.asuscomm.com',
-         [{tick,"tick","1.0.0"},
-          {adder,"adder","1.0.0"},
-          {stdlib,"ERTS  CXC 138 10","3.9.2"},
-          {kernel,"ERTS  CXC 138 10","6.4"}]},
-     {'w20002@varmdo.asuscomm.com',
-         [{app_discovery,"app_discovery","1.0.0"},
-          {stdlib,"ERTS  CXC 138 10","3.9.2"},
-          {kernel,"ERTS  CXC 138 10","6.4"}]},
-     {'w20004@varmdo.asuscomm.com',
-         [{app_discovery,"app_discovery","1.0.0"},
-          {stdlib,"ERTS  CXC 138 10","3.9.2"},
-          {kernel,"ERTS  CXC 138 10","6.4"}]}],
-
+    L1= app_discovery:query(kernel_refc),
+ %   glurk=L1,
+    L=erlang:registered(),
+    true=lists:member(adder,L), 
+    true=lists:member('controller@varmdo.asuscomm.com',L1),
+    L2=app_discovery:query(adder),
+    true=lists:member('controller@varmdo.asuscomm.com',L2),
     ok.
 
 t2()->
@@ -52,6 +43,6 @@ t2()->
     ok.
 
 t3()->
-    L=app_discovery:query(kernel),
+    L=app_discovery:query(kernel_refc),
     true=lists:member('w20002@varmdo.asuscomm.com',L),
     ok.

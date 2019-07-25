@@ -13,7 +13,8 @@
 %-include("interfacesrc/brd_local.hrl").
 
 %% --------------------------------------------------------------------
- 
+-define(NUM_TRIES,5).
+-define(DEPLOY_INTERVAL,5000).
 %% --------------------------------------------------------------------
 %% Key Data structures
 %% 
@@ -22,13 +23,13 @@
 	      }).
 
 %% --------------------------------------------------------------------
--define(SYNC_INTERVAL,2*1000*60).
+-define(SYNC_INTERVAL,10*1000).
 %% ====================================================================
 %% External functions
 %% ====================================================================
 
 
--export([update_config/1,
+-export([update_config/2,
 	 sync/1
 	]).
 
@@ -54,13 +55,14 @@ stop()-> gen_server:call(?MODULE, {stop},infinity).
 
 
 %%-----------Call ------------------------------------------------------------
-update_config(Filename,Binary)->
-    gen_server:call(?MODULE, {Filename,Binary},10*10000).
+
 
 %%----------Cast-------------------------------------------------------------
 sync(Interval)->
     gen_server:cast(?MODULE, {sync,Interval}).    
 
+update_config(Filename,Binary)->
+    gen_server:cast(?MODULE, {update_config,Filename,Binary}).
 %% ====================================================================
 %% Server functions
 %% ====================================================================
@@ -75,7 +77,12 @@ sync(Interval)->
 %
 %% --------------------------------------------------------------------
 init([]) ->
-    {NodeAppList,AppNodesList}=rpc:call(node(),app_discovery_lib,sync,[?SYNC_INTERVAL],5000),
+    application:start(app_discovery),    
+    application:start(app_deploy),
+    R=rpc:call(node(),controller_lib,deploy_app_discovery,[?NUM_TRIES,?DEPLOY_INTERVAL,false]),
+    io:format("R= ~p~n",[{date(),time(),?MODULE,?LINE,R}]),
+    spawn(controller,sync,[?SYNC_INTERVAL]),
+    io:format("Started server ~p~n",[{date(),time(),?MODULE}]),
     {ok, #state{}}.   
     
 %% --------------------------------------------------------------------
@@ -88,18 +95,6 @@ init([]) ->
 %%          {stop, Reason, Reply, State}   | (terminate/2 is called)
 %%          {stop, Reason, State}            (aterminate/2 is called)
 %% --------------------------------------------------------------------
-
-handle_call({load_start_app,Node,App}, _From, State) ->
-%    Reply={?MODULE,?LINE},
-    Reply=rpc:call(node(),app_deploy_lib,load_start_app,[Node,App],5000),
-    {reply, Reply, State};
-
-handle_call({stop_unload_app,Node,App}, _From, State) ->
-%    Reply={?MODULE,?LINE},
-    Reply=rpc:call(node(),app_deploy_lib,stop_unload_app,[Node,App],5000),
-    {reply, Reply, State};
-
-
 handle_call({stop}, _From, State) ->
   %  io:format("stop ~p~n",[{?MODULE,?LINE}]),
     {stop, normal, shutdown_ok, State};
@@ -116,10 +111,14 @@ handle_call(Request, From, State) ->
 %%          {stop, Reason, State}            (terminate/2 is called)
 %% --------------------------------------------------------------------
 handle_cast({sync,Interval},State) ->
-    {NodeAppList,AppNodesList}=rpc:call(node(),app_discovery_lib,sync,[Interval],5000),
-    NewState=State#state{node_apps_list=NodeAppList,app_nodes_list=AppNodesList},
+    rpc:call(node(),controller_lib,campaign,[],5000),
     spawn(controller_lib,tick,[Interval]),
-    {noreply, NewState};
+    {noreply, State};
+
+handle_cast({update_config,Filename,Binary},State) ->
+    ok=file:write_file(Filename,Binary),
+    rpc:call(node(),controller_lib,campaign,[],5000),
+    {noreply, State};
 
 handle_cast(Msg, State) ->
     io:format("unmatched match cast ~p~n",[{?MODULE,?LINE,Msg}]),
@@ -161,9 +160,6 @@ code_change(_OldVsn, State, _Extra) ->
 %% Description:
 %% Returns: non
 %% --------------------------------------------------------------------
-tick(Interval)->
-    timer:sleep(Interval),
-    controller:sync(Interval).
 
 %% --------------------------------------------------------------------
 %% Internal functions
