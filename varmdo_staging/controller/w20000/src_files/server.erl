@@ -4,7 +4,7 @@
 %%%  
 %%% Created : 10 dec 2012
 %%% -------------------------------------------------------------------
--module(app_discovery).
+-module(server).
 
 -behaviour(gen_server).
 %% --------------------------------------------------------------------
@@ -18,23 +18,16 @@
 %% Key Data structures
 %% 
 %% --------------------------------------------------------------------
--record(state,{node_apps_list,
-	       app_nodes_list
-	      }).
+-record(state,{tick}).
 
 %% --------------------------------------------------------------------
--define(SYNC_INTERVAL,2*1000*60).
+
 %% ====================================================================
 %% External functions
 %% ====================================================================
 
 
--export([ query/1,
-	  update_app_lists/0,
-	  all_apps/0,
-	  node_apps_list/0,
-	  app_nodes_list/0,
-	  sync/1
+-export([tick/0,num/0
 	]).
 
 -export([start/0,
@@ -49,7 +42,6 @@
 %% External functions
 %% ====================================================================
 
-%% Asynchrounus Signals
 
 %% Gen server function
 
@@ -58,21 +50,15 @@ stop()-> gen_server:call(?MODULE, {stop},infinity).
 
 
 
-%%-----------Call ------------------------------------------------------------
-app_nodes_list()-> gen_server:call(?MODULE, {app_nodes_list},infinity).
-node_apps_list()-> gen_server:call(?MODULE, {node_apps_list},infinity).
+%%-----------------------------------------------------------------------
 
-query(App)->
-    gen_server:call(?MODULE, {query,App},15000).
+num()->
+    gen_server:call(?MODULE, {num},5000).
 
-all_apps()->
-    gen_server:call(?MODULE, {all_apps},15000).
-%%----------Cast-------------------------------------------------------------
-update_app_lists()->
-    gen_server:cast(?MODULE, {update_app_lists}).    
 
-sync(Interval)->
-    gen_server:cast(?MODULE, {sync,Interval}).    
+%%-----------------------------------------------------------------------
+tick()->
+    gen_server:cast(?MODULE, {tick}).
 
 %% ====================================================================
 %% Server functions
@@ -88,9 +74,8 @@ sync(Interval)->
 %
 %% --------------------------------------------------------------------
 init([]) ->
-    {NodeAppList,AppNodesList}=rpc:call(node(),app_discovery_lib,sync,[?SYNC_INTERVAL],5000),
     io:format("Started server ~p~n",[{date(),time(),?MODULE}]),
-    {ok, #state{node_apps_list=NodeAppList,app_nodes_list=AppNodesList}}.   
+    {ok, #state{tick=0}}.   
     
 %% --------------------------------------------------------------------
 %% Function: handle_call/3
@@ -103,29 +88,11 @@ init([]) ->
 %%          {stop, Reason, State}            (aterminate/2 is called)
 %% --------------------------------------------------------------------
 
-handle_call({node_apps_list}, _From, State) ->
-    Reply=State#state.node_apps_list,
-    {reply, Reply, State};
-
-handle_call({app_nodes_list}, _From, State) ->
-    Reply=State#state.app_nodes_list,
-    {reply, Reply, State};
-
-handle_call({query,WantedApp}, _From, State) ->
-%  {NodeAppList,AppNodesList}=app_discovery_lib:check_apps(),
-    AppNodesList=State#state.app_nodes_list,
-   % glurk=AppNodesList,
-    
-    Reply=[Node||{App,Node}<-AppNodesList,true==(WantedApp==App)],
-    {reply, Reply, State};
-
-handle_call({all_apps}, _From, State) ->
-%    Reply={?MODULE,?LINE},
-    Reply=State#state.node_apps_list,
+handle_call({num}, _From, State) ->
+    Reply=State#state.tick,
     {reply, Reply, State};
 
 handle_call({stop}, _From, State) ->
-  %  io:format("stop ~p~n",[{?MODULE,?LINE}]),
     {stop, normal, shutdown_ok, State};
 
 handle_call(Request, From, State) ->
@@ -139,15 +106,10 @@ handle_call(Request, From, State) ->
 %%          {noreply, State, Timeout} |
 %%          {stop, Reason, State}            (terminate/2 is called)
 %% --------------------------------------------------------------------
-handle_cast({update_app_lists},State) ->
-    {NodeAppList,AppNodesList}=rpc:call(node(),app_discovery_lib,check_apps,[],5000),
-    NewState=State#state{node_apps_list=NodeAppList,app_nodes_list=AppNodesList},
-    spawn(app_discovery_lib,tick,[?SYNC_INTERVAL]),
-    {noreply, NewState};
 
-handle_cast({sync,Interval},State) ->
-    {NodeAppList,AppNodesList}=rpc:call(node(),app_discovery_lib,sync,[Interval],5000),
-    NewState=State#state{node_apps_list=NodeAppList,app_nodes_list=AppNodesList},
+handle_cast({tick}, State) ->
+    Tick=State#state.tick,
+    NewState=State#state{tick=Tick+1},
     {noreply, NewState};
 
 handle_cast(Msg, State) ->
@@ -183,7 +145,7 @@ code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
 %% --------------------------------------------------------------------
-%%% Exyernal functions
+%%% Internal functions
 %% --------------------------------------------------------------------
 %% --------------------------------------------------------------------
 %% Function: 
@@ -191,8 +153,6 @@ code_change(_OldVsn, State, _Extra) ->
 %% Returns: non
 %% --------------------------------------------------------------------
 
-    
-    
 
 %% --------------------------------------------------------------------
 %% Internal functions

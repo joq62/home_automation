@@ -1,13 +1,17 @@
 all:
 	ok
 compile:
-	rm -rf app_files/* ebin_files/*;
+	rm -rf app_files/* ebin_files/* src_files/*;
 #  applications
 	erlc -o ebin_files /home/pi/erlang/dist/home_automation/applications/*/src/*.erl;
+	cp /home/pi/erlang/dist/home_automation/applications/*/src/*.erl src_files;
+	cp /home/pi/erlang/dist/home_automation/applications/*/src/*.app src_files;
 	cp /home/pi/erlang/dist/home_automation/applications/*/src/*.app app_files;
 	cp /home/pi/erlang/dist/home_automation/applications/*/src/*.app ebin_files;
 #servers
 	erlc -o ebin_files  /home/pi/erlang/dist/home_automation/servers/*/src/*.erl;
+	cp /home/pi/erlang/dist/home_automation/servers/*/src/*.erl src_files;
+#	cp /home/pi/erlang/dist/home_automation/servers/*/src/*.hrl src_files;
 # eunit test
 	rm -rf test_ebin/*;
 	erlc -o test_ebin test_src/*.erl;

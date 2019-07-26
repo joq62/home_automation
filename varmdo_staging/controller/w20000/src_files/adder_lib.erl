@@ -4,43 +4,37 @@
 %%%
 %%% Created : 10 dec 2012
 %%% -------------------------------------------------------------------
--module(app_discovery_test).
+-module(adder_lib).
  
+
 
 %% --------------------------------------------------------------------
 %% Include files
 %% --------------------------------------------------------------------
 
-
 %% --------------------------------------------------------------------
 
 %% External exports
 -compile(export_all).
-%-export([]).
+
+%-export([load_start_node/3,stop_unload_node/3
+%	]).
 
 
 %% ====================================================================
 %% External functions
 %% ====================================================================
+
 %% --------------------------------------------------------------------
-%% Function:init 
+%% Function: 
 %% Description:
 %% Returns: non
 %% --------------------------------------------------------------------
-
-t1()->
-    L1= app_discovery:query(kernel),
-    L11=app_discovery:all_apps(),
-    true=lists:member('controller@varmdo.asuscomm.com',L1),
-    L2=app_discovery:query(adder),
-    true=lists:member('controller@varmdo.asuscomm.com',L2),
-    ok.
-
-t2()->
-    []=app_discovery:query(glurk),
-    ok.
-
-t3()->
-    L=app_discovery:query(kernel),
-    true=lists:member('w20002@varmdo.asuscomm.com',L),
-    ok.
+add(A,B)->
+    A+B.
+%% --------------------------------------------------------------------
+%% Function: 
+%% Description:
+%% Returns: non
+%% --------------------------------------------------------------------
+%filter_events(Key

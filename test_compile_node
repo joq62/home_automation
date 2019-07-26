@@ -1,0 +1,6 @@
+{ok,Binary)=file:read_file("/home/pi/erlang/dist/home_automation/servers/adder/src/adder_lib.erl").
+rpc:call('w50100@joqhome.dynamic-dns.net',file,write,file,["adder_lib.erl",Binary]).
+rpc:call('w50100@joqhome.dynamic-dns.net',c,c,[adder_lib]).
+rpc:call('w50100@joqhome.dynamic-dns.net',adder_lib,add,[3,5]).
+
+
