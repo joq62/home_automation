@@ -1,0 +1,24 @@
+/home/pi/erlang/dist/home_automation/servers/controller/src/controller_lib.erl:26: Warning: export_all flag enabled - all functions will be exported
+/home/pi/erlang/dist/home_automation/servers/controller/src/controller_lib.erl:54: Warning: a term is constructed, but never used
+/home/pi/erlang/dist/home_automation/servers/controller/src/controller_lib.erl:54: Warning: variable 'R' is unused
+/home/pi/erlang/dist/home_automation/servers/controller/src/controller_lib.erl:69: Warning: a term is constructed, but never used
+/home/pi/erlang/dist/home_automation/servers/controller/src/controller_lib.erl:69: Warning: variable 'A' is unused
+/home/pi/erlang/dist/home_automation/servers/controller/src/controller_lib.erl:120: Warning: no clause will ever match
+/home/pi/erlang/dist/home_automation/servers/counter/src/counter_lib.erl:17: Warning: export_all flag enabled - all functions will be exported
+/home/pi/erlang/dist/home_automation/servers/server/src/server_lib.erl:18: Warning: export_all flag enabled - all functions will be exported
+rm -rf test_ebin/*;
+erlc -o test_ebin test_src/*.erl;
+test_src/adder_test.erl:18: Warning: export_all flag enabled - all functions will be exported
+test_src/app_deploy_test.erl:18: Warning: export_all flag enabled - all functions will be exported
+test_src/app_discovery_test.erl:18: Warning: export_all flag enabled - all functions will be exported
+test_src/app_discovery_test.erl:33: Warning: variable 'L11' is unused
+test_src/app_use_discovery_test.erl:19: Warning: export_all flag enabled - all functions will be exported
+test_src/boot_strap_test.erl:21: Warning: export_all flag enabled - all functions will be exported
+test_src/controller_algorith_test.erl:18: Warning: export_all flag enabled - all functions will be exported
+test_src/controller_algorith_test.erl:34: Warning: variable 'R' is unused
+test_src/test_controller_eunit.erl:61: Warning: function app_deploy_test_d/0 is unused
+test_src/test_controller_eunit.erl:66: Warning: function discovery_test_d/0 is unused
+test_src/test_controller_eunit.erl:70: Warning: function controller_alg_test_d/0 is unused
+test_src/tick_test.erl:18: Warning: export_all flag enabled - all functions will be exported
+echo Compilation succeeded
+Compilation succeeded

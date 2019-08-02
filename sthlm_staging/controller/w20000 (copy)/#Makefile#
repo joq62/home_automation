@@ -1,0 +1,29 @@
+all:
+	ok
+test:
+	rm -rf applications/* servers/*;
+#  applications app_deploy
+	erlc -o ebin_files  ../../../applications/app_deploy/src/*.erl;
+	cp ../../../applications/app_deploy/src/*.app app_files;
+#servers app_discovery
+	mkdir servers/app_discovery;
+	erlc -o servers/app_discovery  ../../../servers/app_discovery/src/*.erl;
+#  applications adder
+	mkdir applications/adder;
+	erlc -o applications/adder  ../../../applications/adder/src/*.erl;
+	cp ../../../applications/adder/src/*.app applications/adder;
+#servers adder
+	mkdir servers/adder;
+	erlc -o servers/adder  ../../../servers/adder/src/*.erl;
+#  applications tick
+	mkdir applications/tick;
+	erlc -o applications/tick  ../../../applications/tick/src/*.erl;
+	cp ../../../applications/tick/src/*.app applications/tick;
+#servers
+	mkdir servers/server;
+	erlc -o servers/server  ../../../servers/server/src/*.erl;
+# eunit test
+	rm -rf test_ebin/*;
+	erlc -o test_ebin test_src/*.erl;
+#erl command
+	erl -pa applications/* -pa servers/* -name controller@varmdo.asuscomm.com -setcookie change -kernel inet_dist_listen_min 20000 inet_dist_listen_max 20000 -pa test_ebin -s test_controller_eunit test 

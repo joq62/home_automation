@@ -1,0 +1,14 @@
+all:
+	rm -rf *beam;
+	erlc *.erl;
+	erl -name boot_strap@varmdo.asuscomm.com -setcookie change -kernel inet_dist_listen_min 20010 inet_dist_listen_max 20010 -s boot_strap start glurk
+cont:
+	rm -rf *beam;
+	cp src/* .;
+	erlc *.erl;
+	erl -name controller@varmdo.asuscomm.com -setcookie change -kernel inet_dist_listen_min 20000 inet_dist_listen_max 20000 -s boot_strap_test start controller
+worker:
+	rm -rf *beam;
+	cp src/* .;
+	erlc *.erl;
+	erl -name w20010@varmdo.asuscomm.com -setcookie change -kernel inet_dist_listen_min 20010 inet_dist_listen_max 20010 -s boot_strap start worker

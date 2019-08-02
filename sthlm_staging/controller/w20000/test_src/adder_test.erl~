@@ -1,0 +1,56 @@
+%%% -------------------------------------------------------------------
+%%% Author  : uabjle
+%%% Description : dbase using dets 
+%%%
+%%% Created : 10 dec 2012
+%%% -------------------------------------------------------------------
+-module(test_controller_eunit).
+ 
+
+%% --------------------------------------------------------------------
+%% Include files
+%% --------------------------------------------------------------------
+-include_lib("eunit/include/eunit.hrl").
+
+%% --------------------------------------------------------------------
+
+%% External exports
+
+-export([]).
+
+
+%% ====================================================================
+%% External functions
+%% ====================================================================
+%% --------------------------------------------------------------------
+%% Function:init 
+%% Description:
+%% Returns: non
+%% --------------------------------------------------------------------
+connect_test()->
+    pong=net_adm:ping('w20002@varmdo.asuscomm.com'),
+    pong=net_adm:ping('w20004@varmdo.asuscomm.com'),
+    ok.
+init_test()->
+    ok=application:start(adder),
+    ok=application:start(tick),
+    ok.
+
+adder_test()->
+    42=adder:add(20,22),
+    ok.
+
+tick_test()->
+    server:tick(),
+    1=server:num(),
+    server:tick(),
+    2=server:num(),
+    ok.
+
+stop_test()->
+    application:stop(adder),
+    application:stop(tick),
+    do_kill(),
+    ok.
+do_kill()->
+    init:stop().

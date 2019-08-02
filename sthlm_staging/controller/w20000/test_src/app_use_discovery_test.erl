@@ -1,0 +1,41 @@
+%%% -------------------------------------------------------------------
+%%% Author  : uabjle
+%%% Description : dbase using dets 
+%%%
+%%% Created : 10 dec 2012
+%%% -------------------------------------------------------------------
+-module(app_use_discovery_test).
+
+ 
+
+%% --------------------------------------------------------------------
+%% Include files
+%% --------------------------------------------------------------------
+
+
+%% --------------------------------------------------------------------
+
+%% External exports
+%-compile(export_all).
+-export([t1/0]).
+
+
+%% ====================================================================
+%% External functions
+%% ====================================================================
+%% --------------------------------------------------------------------
+%% Function:init 
+%% Description:
+%% Returns: non
+%% --------------------------------------------------------------------
+
+
+t1()->
+ %   ['controller@varmdo.asuscomm.com']=app_discovery:query(adder),
+    ok=app_deploy:load_start_app('w20002@varmdo.asuscomm.com',adder),
+    Nodes=app_discovery:query(adder),
+%    ok=io:format("~p~n",[{?MODULE,?LINE,Nodes}]),
+    [Node|_]=Nodes,
+    42=rpc:call(Node,adder,add,[20,22],5000),
+    app_deploy:stop_unload_app('w20002@varmdo.asuscomm.com',adder),
+    ok.
