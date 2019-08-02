@@ -15,8 +15,8 @@
 %% --------------------------------------------------------------------
 
 %% External exports
--compile(export_all).
-%-export([]).
+%-compile(export_all).
+-export([t1/0,t2/0,t3/0]).
 
 
 %% ====================================================================
@@ -31,7 +31,7 @@
 t1()->
     {ok,Info}=file:consult("node_app.config"),
     AvailableNodes=nodes(), % Exclude controller node
-    R=do_deploy(Info,AvailableNodes,ok),
+    do_deploy(Info,AvailableNodes,ok),
     ok.
 
 t2()->

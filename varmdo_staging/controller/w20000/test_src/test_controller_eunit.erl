@@ -57,21 +57,6 @@ app_discovery_test()->
     app_deploy:stop_unload_app(node(),adder),
     app_deploy:stop_unload_app(node(),tick),
     ok.
-
-app_deploy_test_d()->
-    ok=app_deploy_test:t1(),
-    ok=app_deploy_test:t2(),
-    ok.
-
-discovery_test_d()->
-    ok=app_use_discovery_test:t1(),    
-    ok.
-
-controller_alg_test_d()->
-    controller_algorith_test:t1(),
-    controller_algorith_test:t2(),
-    controller_algorith_test:t3(),
-    ok.
     
 
 stop_test()->

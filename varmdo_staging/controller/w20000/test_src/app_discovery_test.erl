@@ -15,8 +15,8 @@
 %% --------------------------------------------------------------------
 
 %% External exports
--compile(export_all).
-%-export([]).
+%-compile(export_all).
+-export([t1/0,t2/0,t3/0]).
 
 
 %% ====================================================================
@@ -30,7 +30,6 @@
 
 t1()->
     L1= app_discovery:query(kernel),
-    L11=app_discovery:all_apps(),
     true=lists:member('controller@varmdo.asuscomm.com',L1),
     L2=app_discovery:query(adder),
     true=lists:member('controller@varmdo.asuscomm.com',L2),

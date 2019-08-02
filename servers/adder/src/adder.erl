@@ -27,8 +27,7 @@
 %% ====================================================================
 
 
--export([ add/2,
-	  crash/0
+-export([ add/2
 	]).
 
 -export([start/0,
@@ -53,9 +52,6 @@ stop()-> gen_server:call(?MODULE, {stop},infinity).
 
 
 %%-----------------------------------------------------------------------
-
-crash()->
-    gen_server:call(?MODULE, {crash},5000).
 
 add(A,B)->
     gen_server:call(?MODULE, {add,A,B},5000).
@@ -91,11 +87,6 @@ init([]) ->
 %%          {stop, Reason, Reply, State}   | (terminate/2 is called)
 %%          {stop, Reason, State}            (aterminate/2 is called)
 %% --------------------------------------------------------------------
-
-handle_call({crash}, _From, State) ->
-    Reply=1/0,
-    {reply, Reply, State};
-
 handle_call({add,A,B}, _From, State) ->
     Reply=rpc:call(node(),adder_lib,add,[A,B],5000),
     {reply, Reply, State};

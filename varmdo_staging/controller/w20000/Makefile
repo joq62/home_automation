@@ -4,13 +4,8 @@ compile:
 	rm -rf app_files/* ebin_files/* src_files/*;
 #  applications
 	erlc -o ebin_files /home/pi/erlang/dist/home_automation/applications/*/src/*.erl;
-	cp /home/pi/erlang/dist/home_automation/applications/*/src/*.erl src_files;
-	cp /home/pi/erlang/dist/home_automation/applications/*/src/*.app src_files;
-	cp /home/pi/erlang/dist/home_automation/applications/*/src/*.app app_files;
-	cp /home/pi/erlang/dist/home_automation/applications/*/src/*.app ebin_files;
 #servers
 	erlc -o ebin_files  /home/pi/erlang/dist/home_automation/servers/*/src/*.erl;
-	cp /home/pi/erlang/dist/home_automation/servers/*/src/*.erl src_files;
 #	cp /home/pi/erlang/dist/home_automation/servers/*/src/*.hrl src_files;
 # eunit test
 	rm -rf test_ebin/*;
@@ -18,7 +13,7 @@ compile:
 	echo Compilation succeeded
 test:
 #erl command
-	erl -pa ebin_files -name controller@varmdo.asuscomm.com -setcookie change -kernel inet_dist_listen_min 20000 inet_dist_listen_max 20000 -pa test_ebin -s test_controller_eunit test
+	erl -pa test_ebin -pa app_files -name controller@varmdo.asuscomm.com -setcookie change -kernel inet_dist_listen_min 20000 inet_dist_listen_max 20000 -s boot_strap_test start controller
 sys_test:
 	erl -pa ebin_files -name controller@varmdo.asuscomm.com -setcookie change -kernel inet_dist_listen_min 20000 inet_dist_listen_max 20000 -pa test_ebin -s test_system_eunit test
 exec:

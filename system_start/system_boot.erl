@@ -16,6 +16,7 @@
 %% --------------------------------------------------------------------
 -define(GIT_APP_FILES,"https://github.com/joq62/app_files.git").
 -define(GIT_EBIN_FILES,"https://github.com/joq62/ebin_files.git").
+-define(GIT_SRC_FILES,"https://github.com/joq62/src_files.git").
 
 %% External exports,
 -compile(export_all).
@@ -33,12 +34,14 @@
 %% Returns: non
 %% --------------------------------------------------------------------
 start()->
-%    os:cmd("rm -r "++"app_files"),
-%    os:cmd("rm -r "++"ebin_files"),   
- %   os:cmd("git clone "++?GIT_APP_FILES),
-  %  os:cmd("git clone "++?GIT_EBIN_FILES),
-    application:start(system_controller).
-    
+    os:cmd("rm -r "++"app_files"),
+    os:cmd("rm -r "++"ebin_files"),  
+    os:cmd("rm -r "++"src_files"),   
+    os:cmd("git clone "++?GIT_APP_FILES),
+    os:cmd("git clone "++?GIT_EBIN_FILES),
+    os:cmd("git clone "++?GIT_SRC_FILES),
+    application:start(controller).
+
 %% --------------------------------------------------------------------
 %% Function: 
 %% Description:

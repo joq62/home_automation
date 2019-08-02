@@ -18,10 +18,10 @@
 -define(PATH_APP_FILES,"app_files").
 -define(PATH_SRC_FILES,"src_files").
 %% External exports,
--compile(export_all).
+%-compile(export_all).
 
-%-export([load_start_node/3,stop_unload_node/3
-%	]).
+-export([load_start_app/2,stop_unload_app/2
+	]).
 
 
 %% ====================================================================
@@ -77,8 +77,8 @@ load_modules(Node,[{Module, Filename}|T],Acc)->
     R=rpc:call(Node,c,c,[Module],5000),
     
   %  R=rpc:call(Node,code,load_binary,[Module, BaseName, Binary],5000), 
-  %  NewAcc=[{Node,Module,R}|Acc],
-    NewAcc=[{Node,Module}|Acc],
+    NewAcc=[{Node,Module,R}|Acc],
+  %  NewAcc=[{Node,Module}|Acc],
     load_modules(Node,T,NewAcc).
 
 
@@ -111,19 +111,8 @@ unload_modules(Node,[Module|T])->
     _RD=rpc:call(Node,code,delete,[Module],5000),
     unload_modules(Node,T).
 
-campaign(NodeAppInfo)->
-  %  Available_Nodes=[node()|nodes()],
-    {?MODULE,?LINE,glurk}.    
-
-
 %% --------------------------------------------------------------------
 %% Function: 
 %% Description:
 %% Returns: non
 %% --------------------------------------------------------------------
-interval_delay(Interval)->    
-    timer:sleep(Interval),
-    {ok,NodeAppInfo}=file:consult(?NODE_APP_CONFIG),
-    app_deploy:campaign(NodeAppInfo),
-    ok.
-    

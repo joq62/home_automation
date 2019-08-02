@@ -1,0 +1,39 @@
+=CRASH REPORT==== 27-Jul-2019::23:37:31.761156 ===
+  crasher:
+    initial call: controller:init/1
+    pid: <0.88.0>
+    registered_name: controller
+    exception error: no match of right hand side value {badrpc,timeout}
+      in function  controller:handle_cast/2 (/home/pi/erlang/dist/home_automation/servers/controller/src/controller.erl, line 115)
+      in call from gen_server:try_dispatch/4 (gen_server.erl, line 637)
+      in call from gen_server:handle_msg/6 (gen_server.erl, line 711)
+    ancestors: [controller_sup,<0.86.0>]
+    message_queue_len: 0
+    messages: []
+    links: [<0.87.0>]
+    dictionary: []
+    trap_exit: false
+    status: running
+    heap_size: 4185
+    stack_size: 27
+    reductions: 11336
+  neighbours:
+
+=SUPERVISOR REPORT==== 27-Jul-2019::23:37:31.766224 ===
+    supervisor: {local,controller_sup}
+    errorContext: child_terminated
+    reason: {{badmatch,{badrpc,timeout}},
+             [{controller,handle_cast,2,
+                          [{file,"/home/pi/erlang/dist/home_automation/servers/controller/src/controller.erl"},
+                           {line,115}]},
+              {gen_server,try_dispatch,4,[{file,"gen_server.erl"},{line,637}]},
+              {gen_server,handle_msg,6,[{file,"gen_server.erl"},{line,711}]},
+              {proc_lib,init_p_do_apply,3,
+                        [{file,"proc_lib.erl"},{line,249}]}]}
+    offender: [{pid,<0.88.0>},
+               {id,controller},
+               {mfargs,{controller,start,[]}},
+               {restart_type,permanent},
+               {shutdown,5000},
+               {child_type,worker}]
+

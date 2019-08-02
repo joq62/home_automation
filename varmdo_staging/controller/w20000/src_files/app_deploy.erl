@@ -61,8 +61,6 @@ stop_unload_app(Node,App)->
     gen_server:call(?MODULE, {stop_unload_app,Node,App},10*1000).
 
 %%----------Cast-------------------------------------------------------------
-sync(Interval)->
-    gen_server:cast(?MODULE, {sync,Interval}).    
 
 %% ====================================================================
 %% Server functions

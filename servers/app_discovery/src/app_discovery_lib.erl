@@ -15,10 +15,10 @@
 %% --------------------------------------------------------------------
 
 %% External exports
--compile(export_all).
+%-compile(export_all).
 
-%-export([load_start_node/3,stop_unload_node/3
-%	]).
+-export([sync/1,check_apps/0,tick/1
+	]).
 
 
 %% ====================================================================
@@ -38,7 +38,7 @@
 
 %% Returns: non
 %% --------------------------------------------------------------------
-sync(Interval)->
+sync(_Interval)->
     {NodeAppList,AppNodesList}=check_apps(),
     {NodeAppList,AppNodesList}.
 check_apps()->
@@ -48,10 +48,6 @@ check_apps()->
     AppNodesList=app_nodes_list(NodeAppList,[]),
     {NodeAppList,AppNodesList}.
 
-
-tick(Interval)->
-    timer:sleep(Interval),
-    app_discovery:sync(Interval).
 %% --------------------------------------------------------------------
 %% Function: 
 %% Description:
@@ -71,3 +67,12 @@ app_nodes_list([{Node,AppsList}|T],Acc)->
     A=[{App,Node}||App<-AppsList],
     NewAcc=lists:append(A,Acc),
     app_nodes_list(T,NewAcc).    
+
+%% --------------------------------------------------------------------
+%% Function: 
+%% Description:
+%% Returns: non
+%% --------------------------------------------------------------------
+tick(Interval)->
+    timer:sleep(Interval),
+    app_discovery:sync(Interval).
