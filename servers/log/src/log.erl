@@ -125,7 +125,7 @@ handle_call({new_event}, _From, State) ->
     {reply, Reply, NewState};
 
 handle_call({read_events,NumEvents}, _From, State) ->
-    Reply=lists:sublist(State#state.events,NumEvents),
+    Reply=log_lib:read_events(State#state.events,NumEvents),
     {reply, Reply, State};
 
 handle_call({stop}, _From, State) ->
@@ -146,13 +146,12 @@ handle_call(Request, From, State) ->
 %(dbase,IpAddrDbase,PortDbase)
 
 handle_cast({print_event},State) ->
-    
+
     {noreply, State};
 
 handle_cast({add_event,Event},State) ->
     {NewEvents,NewEventNum}=rpc:call(node(),log_lib,add_event,[date(),time(),Event,State#state.events,State#state.event_num,State#state.max_events]),
-    
-       NewState=State#state{events=NewEvents, event_num=NewEventNum},
+    NewState=State#state{events=NewEvents, event_num=NewEventNum},
     {noreply, NewState};
 
 handle_cast(Msg, State) ->

@@ -82,8 +82,7 @@ heart_beat(Interval)->
 %% --------------------------------------------------------------------
 init([]) ->
     Prev=mon_lib:print_event([]),
-    spawn(mon,heart_beat,[?INTERVAL]),
-    
+    spawn(mon,heart_beat,[?INTERVAL]),    
     {ok, #state{prev=Prev}}.    
     
 %% --------------------------------------------------------------------
@@ -113,8 +112,6 @@ handle_call(Request, From, State) ->
 %% --------------------------------------------------------------------
 handle_cast({heart_beat,Interval}, State) ->
     timer:sleep(Interval),
-    NewPrev=mon_lib:print_event([State#state.prev]),
-    NewState=State#state{prev=NewPrev},
     spawn(mon,heart_beat,[?INTERVAL]),   
     {noreply, NewState};
 

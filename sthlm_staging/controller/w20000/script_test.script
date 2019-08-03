@@ -3,3 +3,9 @@ test_controller_eunit:connect_test().
 test_controller_eunit:init_test().
 test_controller_eunit:controller_alg_test().
 
+controller:stop_app('w50000@varmdo.asuscomm.com',adder).
+controller:start_app('w50000@varmdo.asuscomm.com',adder). 
+
+controller:stop_app('w50100@joqhome.dynamic-dns.net',adder).
+controller:start_app('w50100@joqhome.dynamic-dns.net',adder). 
+

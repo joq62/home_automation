@@ -45,13 +45,14 @@
 
 start_test()->
     {ok,_}=log:start(),
-    L=log:read_events(1),
+    L=log:read_events(3),
     Date=date(),
     [[{date,Date},
       {time,_Time},
       {node,test_log@main},
       {event_level,info},
       {event_info,[log,_Line,'service started',log]}]]=L,
+
     [{date,_},
      {time,_},
      {node,test_log@main},
@@ -87,7 +88,7 @@ add_events_1_test()->
     log:add_event(Not1),
     Dbg1=[{node,node_8},{event_level,debug},{event_info,[?MODULE,line8,'test debug 1',debug1]}],
     log:add_event(Dbg1),  
-    %glurk=log:read_events(10),
+    glurk=log:read_events(5),
     ok.
     
 filter_events_test_zz()->

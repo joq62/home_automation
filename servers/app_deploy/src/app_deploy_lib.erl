@@ -17,6 +17,8 @@
 -define(PATH_EBIN,"ebin_files").
 -define(PATH_APP_FILES,"app_files").
 -define(PATH_SRC_FILES,"src_files").
+-define(GIT_APP_FILES,"https://github.com/joq62/app_files.git").
+-define(GIT_SRC_FILES,"https://github.com/joq62/src_files.git").
 %% External exports,
 %-compile(export_all).
 
@@ -49,6 +51,8 @@ cast(App,{M,F,A})->
 load_start_app(Node,Application)->
     case net_adm:ping(Node) of
 	pang->
+	    Event=[{node,node()},{event_level,error},{event_info,['tried to start app nodedown',?MODULE,?LINE,Node,Application]}],
+	    rpc:cast(node(),app_deploy_lib,cast,[log,{log,add_event,[Event]}]),
 	    Reply={error,[?MODULE,?LINE,date(),time(),nodedown,Node]};
 	pong->
 	    Apps=rpc:call(Node,application,which_applications,[],5000),
@@ -56,6 +60,9 @@ load_start_app(Node,Application)->
 %	    io:format("Node, Apps = ~p~n",[{?MODULE,?LINE,Node,Apps}]),
 	    case lists:keymember(Application,1,Apps) of
 		false->	  
+		    % secure latest src
+		    os:cmd("git clone "++?GIT_SRC_FILES),
+		    os:cmd("git clone "++?GIT_APP_FILES),		    
 		   % Read app file 
 		    AppFilename=atom_to_list(Application)++".app",
 		    AppFullFilename=filename:join(?PATH_APP_FILES,AppFilename),
@@ -76,6 +83,8 @@ load_start_app(Node,Application)->
 			    Reply={error,[?MODULE,?LINE,date(),time(),Err,Node,Application]}
 		    end;    
 		true->
+		 %   Event=[{node,node()},{event_level,error},{event_info,['already_loaded_started',Node,Application]}],
+		  %  rpc:cast(node(),app_deploy_lib,cast,[log,{log,add_event,[Event]}]),
 		    Reply={error,[?MODULE,?LINE,date(),time(),'already_loaded_started',Node,Application]}
 	    end
     end,
@@ -105,15 +114,20 @@ stop_unload_app(Node,Application)->
 	    {ok,Terms}=rpc:call(Node,file,consult,[AppFilename]),
 	    [{application,Application,Info}]=Terms,
 	    {modules,Modules}=lists:keyfind(modules,1,Info),
+	    rpc:call(Node,application,stop,[Application]),
+	    
+	    rpc:call(Node,application,unload,[Application]),
 	    [rpc:call(Node,file,delete,[atom_to_list(Module)++".erl"])||Module<-Modules],
 	    [rpc:call(Node,file,delete,[atom_to_list(Module)++".beam"])||Module<-Modules],
-	    rpc:call(Node,application,stop,[Application]),
-	    rpc:call(Node,application,unload,[Application]),
 	    rpc:call(Node,file,delete,[AppFilename]),
 	    unload_modules(Node,Modules),
 	    Reply=ok,
 	    rpc:eval_everywhere(app_discovery,update_app_lists,[]);
+	%    Event=[{node,Node},{event_level,info},{event_info,['Server stopped',Application]}],
+	 %   rpc:cast(node(),app_deploy_lib,cast,[log,{log,add_event,[Event]}]);
 	false ->
+	    Event=[{node,node()},{event_level,error},{event_info,['Service doesnt exists',Node,Application]}],
+	    rpc:cast(node(),app_deploy_lib,cast,[log,{log,add_event,[Event]}]),
 	    Reply={error,['eexist',Application]}
     end,
     Reply.
