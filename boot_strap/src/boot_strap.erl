@@ -37,13 +37,13 @@ start([NodeType])->
     case NodeType of
 	worker->
 	    io:format("~p~n",[{?MODULE,?LINE,NodeType}]),
-	    os:cmd("rm -rf app_files src_files"),
+	    os:cmd("sudo rm -rf app_files src_files"),
 	    {ok,FileNames}=file:list_dir("."),
 	    [file:delete(FileName)||FileName<-FileNames,".erl"==filename:extension(FileName)],
 	    [file:delete(FileName)||FileName<-FileNames,".beam"==filename:extension(FileName)],
 	    [file:delete(FileName)||FileName<-FileNames,".app"==filename:extension(FileName)];
 	controller->
-	    os:cmd("rm -rf app_files src_files"),
+	    os:cmd("sudo rm -rf app_files src_files"),
 	    {ok,FileNames}=file:list_dir("."),
 	    [file:delete(FileName)||FileName<-FileNames,".erl"==filename:extension(FileName)],
 	    [file:delete(FileName)||FileName<-FileNames,".beam"==filename:extension(FileName)],

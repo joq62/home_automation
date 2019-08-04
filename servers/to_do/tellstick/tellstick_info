@@ -1,0 +1,35 @@
+ A=rpc:call('w50000@varmdo.asuscomm.com',os,cmd,["tdtool --list"]).
+
+
+
+"Number of devices: 6\n1\tglurk_1\tON\n2\tvaermdo_main_kitchen_heater_1\tOFF\n3\tglurk_3\tON\n4\tvaermdo_main_entrance_indoor_lamp_2\tOFF\n5\tvaermdo_main_livingroom_heater_1\tOFF\n6\tvaermdo_main_entrance_indoor_lamp_1\tOFF\n\n\nSENSORS:\n\nPROTOCOL            \tMODEL               \tID   \tTEMP \tHUMIDITY\tLAST UPDATED        \nfineoffset          \ttemperaturehumidity \t167  \t23.0°\t44%     \t2019-08-04 08:37:36 \nfineoffset          \ttemperaturehumidity \t247  \t20.2°\t53%     \t2019-08-04 08:37:09 \nfineoffset          \ttemperature         \t248  \t16.3°\t        \t2019-08-04 08:36:09 \nfineoffset          \ttemperaturehumidity \t41   \t-109.3°\t78%     \t2019-07-29 11:19:22 \nfineoffset          \ttemperature         \t255  \t-204.7°\t        \t2019-07-28 16:21:16 \nfineoffset          \ttemperaturehumidity \t83   \t-14.0°\t21%     \t2019-07-29 12:50:34 \nfineoffset          \ttemperaturehumidity \t148  \t-157.0°\t77%     \t2019-07-29 12:30:34 \n\n"
+
+\n -> new line
+\t -> tab
+
+Number of devices: 6
+1	glurk_1		ON
+2	vaermdo_main_kitchen_heater	OFF
+
+SENSORS:
+
+PROTOCOL      	MODEL			ID	TEMP	HUMIDITY	LAST UPDATE
+
+fineoffset	temperaturehumidity	167	23.0°	44%		2019-08-04 08:37:36
+
+string:tokens(L,"\n").
+
+["Number of devices: 6","1\tglurk_1\tOFF",
+ "2\tvaermdo_main_kitchen_heater_1\tOFF","3\tglurk_3\tOFF",
+ "4\tvaermdo_main_entrance_indoor_lamp_2\tOFF",
+ "5\tvaermdo_main_livingroom_heater_1\tOFF",
+ "6\tvaermdo_main_entrance_indoor_lamp_1\tOFF","SENSORS:",
+ "PROTOCOL            \tMODEL               \tID   \tTEMP \tHUMIDITY\tLAST UPDATED        ",
+ "fineoffset          \ttemperaturehumidity \t167  \t29.6°\t30%     \t2019-08-04 11:35:59 ",
+ "fineoffset          \ttemperaturehumidity \t247  \t21.7°\t51%     \t2019-08-04 11:35:09 ",
+ "fineoffset          \ttemperature         \t248  \t19.2°\t        \t2019-08-04 11:34:09 ",
+ "fineoffset          \ttemperaturehumidity \t41   \t-109.3°\t78%     \t2019-07-29 11:19:22 ",
+ "fineoffset          \ttemperature         \t255  \t-204.7°\t        \t2019-07-28 16:21:16 ",
+ "fineoffset          \ttemperaturehumidity \t83   \t-14.0°\t21%     \t2019-07-29 12:50:34 ",
+ "fineoffset          \ttemperaturehumidity \t148  \t-157.0°\t77%     \t2019-07-29 12:30:34 "]
+

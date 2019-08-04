@@ -60,9 +60,12 @@ load_start_app(Node,Application)->
 %	    io:format("Node, Apps = ~p~n",[{?MODULE,?LINE,Node,Apps}]),
 	    case lists:keymember(Application,1,Apps) of
 		false->	  
-		    % secure latest src
+
+		    % secure latest 
+		    os:cmd("sudo rm -rf "++?GIT_SRC_FILES),
+		    os:cmd("sudo rm -rf "++?GIT_APP_FILES),
 		    os:cmd("git clone "++?GIT_SRC_FILES),
-		    os:cmd("git clone "++?GIT_APP_FILES),		    
+		    os:cmd("git clone "++?GIT_APP_FILES),
 		   % Read app file 
 		    AppFilename=atom_to_list(Application)++".app",
 		    AppFullFilename=filename:join(?PATH_APP_FILES,AppFilename),
@@ -71,7 +74,7 @@ load_start_app(Node,Application)->
 		    {modules,Modules}=lists:keyfind(modules,1,Info),
 		 %   Modules_Filenames=[{Module,filename:join(?PATH_EBIN,atom_to_list(Module)++".beam")}||Module<-Modules],
 		    Modules_Filenames=[{Module,filename:join(?PATH_SRC_FILES,atom_to_list(Module)++".erl")}||Module<-Modules],
-		    Result = load_modules(Node,Modules_Filenames,[]),
+		    _Result = load_modules(Node,Modules_Filenames,[]),
 %		    io:format("Result = load_modules ~p~n",[{?MODULE,?LINE,Result}]),
 		    {ok,Binary}=file:read_file(AppFullFilename),
 		    ok=rpc:call(Node,file,write_file,[AppFilename,Binary],5000),

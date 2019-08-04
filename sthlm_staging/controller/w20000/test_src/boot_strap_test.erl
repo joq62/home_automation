@@ -60,7 +60,7 @@ start([NodeType])->
 	    os:cmd("cp /home/pi/erlang/dist/home_automation/applications/*/src/*.app app_files"),
 
 	    {ok,SrcFiles}=file:list_dir(?SRC_FILES),
-	    R=[c:c(filename:join(?SRC_FILES,FileName))||FileName<-SrcFiles,".erl"==filename:extension(FileName)],
+	    _R=[c:c(filename:join(?SRC_FILES,FileName))||FileName<-SrcFiles,".erl"==filename:extension(FileName)],
 	    {ok,AppFiles}=file:list_dir(?APP_FILES),
 	    [file:copy(filename:join(?APP_FILES,FileName),FileName)||FileName<-AppFiles,".app"==filename:extension(FileName)],
 	    ok=application:start(controller),

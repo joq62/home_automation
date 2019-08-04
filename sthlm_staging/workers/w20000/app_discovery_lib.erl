@@ -17,13 +17,16 @@
 %% External exports
 %-compile(export_all).
 
--export([sync/1,check_apps/0,tick/1
+-export([sync/1,check_apps/0,query/2,tick/1
 	]).
 
 
 %% ====================================================================
 %% External functions
 %% ====================================================================
+query(WantedApp,AppNodesList)->
+    
+    [Node||{App,Node}<-AppNodesList,true==(WantedApp==App)].
 
 %% --------------------------------------------------------------------
 %% Function: 
@@ -45,7 +48,7 @@ sync(Interval)->
 check_apps()->
     ListOfNodes=[node()|nodes()],
 %    io:format("ListOfNodes ~p~n",[{?MODULE,?LINE,ListOfNodes}]),
-    Z=[{Node,rpc:call(Node,application,which_applications,[],5000)}||Node<-ListOfNodes],
+    Z=[{Node,rpc:call(Node,application,which_applications,[],15000)}||Node<-ListOfNodes],
 %    io:format("Z ~p~n",[{?MODULE,?LINE,Z}]),
     NodeAppList=node_apps_list(Z,[]),
     AppNodesList=app_nodes_list(NodeAppList,[]),
