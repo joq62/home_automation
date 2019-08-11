@@ -1,0 +1,5 @@
+R2a: Improvements:
+1) re-set the devices every second minute. secure that device is in correct status 
+2) All constants and definitions in one file (Port,host....)
+3) new buttons for turn on cluster devices (all lamps , standard heater etc)
+4) all beam files and other files in ebin dir. That is the only deliver only beam files for the application?
