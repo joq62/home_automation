@@ -1,0 +1,45 @@
+<script type="text/javascript" src="/static/jquery.min.js"></script>
+<link rel="stylesheet" href="app_tellstick.css" type="text/css">
+
+
+<body>
+<div id="txt_huset_temp_txt">Huset temp </div>
+<div id="txt_huset_temp">22</div>
+<div id="txt_ute_temp_txt">Ute temp </div>
+<div id="txt_ute_temp">12</div>
+<div id="txt_lillstugan_temp_txt">Lillstugan temp</div>
+<div id="txt_lillstugan_temp">18</div>
+
+<div id="txt_session"></div>
+<input class="live_input" type="password" id="session_text"></input>
+<button id="session">Avsluta</button>
+
+<button id="b_varme_huset">ON/OFF</button>
+<div id="txt_varme_huset">Varme huset</div>
+<div id="txt_status_on_varme_huset">ON</div>
+<div id="txt_status_off_varme_huset"></div>
+
+<button id="b_varme_lillstugan">ON/OFF</button>
+<div id="txt_varme_lillstugan">Varme Lillstugan</div>
+<div id="txt_status_on_varme_lillstugan"></div>
+<div id="txt_status_off_varme_lillstugan">OFF</div>
+
+<button id="b_lampor_huset">ON/OFF</button>
+<div id="txt_lampor_huset">Lampor huset</div>
+<div id="txt_status_lampor_huset">ON</div>
+
+<button id="b_lampor_lillstugan">ON/OFF</button>
+<div id="txt_lampor_lillstugan">Lampor Lillstugan</div>
+<div id="txt_status_lampor_lillstugan">OFF</div>
+
+<script>
+$(document).ready(run);
+function run(){
+  $("#b_varme_huset").click(function(){ send_json({clicked:'b_varme_huset'}); });
+  $("#b_varme_lillstugan").click(function(){ send_json({clicked:'b_varme_lillstugan'}); });
+  $("#b_lampor_huset").click(function(){ send_json({clicked:'b_lampor_huset'}); });
+  $("#b_lampor_lillstugan").click(function(){ send_json({clicked:'b_lampor_lillstugan'}); });
+  $("#session").click(function(){ send_json({clicked:'session'});});
+connect_to_erlang("localhost",2000, "web_browser");
+}
+</script>

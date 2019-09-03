@@ -1,0 +1,112 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>Websocket client</title>
+    <script src="/static/jquery.min.js"></script>
+    <script type="text/javascript">
+
+      var websocket;
+      $(document).ready(init);
+
+      function init() {
+          $('#server').val("ws://" + window.location.host + "/websocket");
+          if(!("WebSocket" in window)){
+              $('#status').append('<p><span style="color: red;">websockets are not supported </span></p>');
+              $("#navigation").hide();
+          } else {
+              $('#status').append('<p><span style="color: green;">websockets are supported </span></p>');
+              connect();
+          };
+              $("#connected").hide();
+              $("#content").hide();
+      };
+
+      function connect()
+      {
+          wsHost = $("#server").val()
+          websocket = new WebSocket(wsHost);
+          websocket.onopen = function(evt) { onOpen(evt) };
+          websocket.onclose = function(evt) { onClose(evt) };
+          websocket.onmessage = function(evt) { onMessage(evt) };
+          websocket.onerror = function(evt) { onError(evt) };
+      };
+
+      function disconnect() {
+          websocket.close();
+      };
+
+      function sendTxt() {
+          if(websocket.readyState == websocket.OPEN){
+              txt = $("#send_txt").val();
+              websocket.send(txt);
+              showScreen('sending: ' + txt);
+          } else {
+               showScreen('websocket is not connected');
+          };
+      };
+
+      function onOpen(evt) {
+          showScreen('<span style="color: green;">CONNECTED </span>');
+          $("#connected").fadeIn('slow');
+          $("#content").fadeIn('slow');
+      };
+
+      function onClose(evt) {
+          showScreen('<span style="color: red;">DISCONNECTED </span>');
+      };
+
+      function onMessage(evt) {
+          console.log(evt.data);
+          showScreen('<span style="color: blue;">RESPONSE: ' + evt.data+ '</span>');
+      };
+
+      function onError(evt) {
+          showScreen('<span style="color: red;">ERROR: ' + evt.data+ '</span>');
+      };
+
+      function showScreen(txt) {
+          $('#output').prepend('<p>' + txt + '</p>');
+      };
+
+      function clearScreen()
+      {
+          $('#output').html("");
+      };
+      function button_test(Id){
+          console.log(Id);
+      };
+    </script>
+  </head>
+
+  <body>
+    <p id="connecting">
+   	<input type='text' id="server" value=""></input>
+    </p>
+
+    <button type="button" id="b_lampor_lillstugan" position:fixed top:17em
+            left:18em font-size:0.8em color:black font-weight:bold
+            background-color:pink padding:3px width:5em;box-shadow:black 0.1em
+            0.1em 0.1em border-radius: 5px  margin:0.3em
+            onclick="button_test("b_lampor_lillstugan")">"ON/OFF"</button>
+  </body>
+  <! ****************************************************************>
+  <! START:      Style: Here you put CSS like structures>
+  <style>
+  body {margin-left:1em;
+        border-radius:10px;
+        padding:1em;
+        width:500px;
+        height:300px;
+        border: 2px solid black;
+        box-shadow:black 0.2em 0.2em 0.2em;
+      }
+      #b_lampor_lillstugan{
+          position:fixed;top:17em;left:18em;
+          font-size:0.8em; color:black;font-weight: bold;
+          background-color:pink;padding:3px;width:5em;box-shadow:black 0.1em 0.1em 0.1em;border-radius: 5px; margin:0.3em 0;
+      }
+  </style>
+        <! END:      Style: Here you put CSS like structures>
+  <! ------------------------------------------------------------>
+
+</html>

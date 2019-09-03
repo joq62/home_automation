@@ -1,0 +1,43 @@
+-module(ws_h).
+
+-export([init/2]).
+-export([websocket_init/1]).
+-export([websocket_handle/2]).
+-export([websocket_info/2]).
+
+init(Req, Opts) ->
+	{cowboy_websocket, Req, Opts}.
+
+websocket_init(State) ->
+%	erlang:start_timer(1000, self(), <<"Hello!">>),
+    io:format("~p~n",[State]),
+    NewState=lists:append(State,[{<<"varme_huset">>,"off"},{<<"varme_lillstugan">>,"off"},
+	   {<<"lampor_huset">>,"off"},{<<"lampor_lillstugan">>,"off"}]),
+    {ok, NewState}.
+
+websocket_handle({text, Msg}, State) ->
+    io:format("~p~n",[{?MODULE,?LINE,Msg}]),
+    io:format("~p~n",[{?MODULE,?LINE,binary_to_list(Msg)}]),
+   {NewState,Reply}= case lists:keyfind(Msg,1,State) of
+			 {Msg,"off"}->
+			     {lists:keyreplace(Msg,1,State,{Msg,"on"}),
+			     {text, << "change_text",":", Msg/binary, ":","on" >>}};
+			 {Msg,"on"}->
+			     {lists:keyreplace(Msg,1,State,{Msg,"off"}),
+			     {text, << "change_text",":", Msg/binary,":", "off" >>}};
+			 X->
+			     io:format("X=~p~n",[X]),
+			     {State,
+			     {text, << "error", Msg/binary, "no_element" >>}}
+		     end,
+    {reply,Reply, NewState};
+
+
+websocket_handle(_Data, State) ->
+	{ok, State}.
+
+websocket_info({timeout, _Ref, Msg}, State) ->
+	erlang:start_timer(1000, self(), <<"How' you doin'?">>),
+	{reply, {text, Msg}, State};
+websocket_info(_Info, State) ->
+	{ok, State}.

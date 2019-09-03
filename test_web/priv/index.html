@@ -1,0 +1,310 @@
+<html>
+  <head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+        <script src="/static/jquery.min.js"></script>
+        <script type="text/javascript">
+
+
+
+      var websocket;
+      $(document).ready(init);
+
+      function init() {
+          $('#server').val("ws://" + window.location.host + "/websocket");
+          if(!("WebSocket" in window)){
+              $('#status').append('<p><span style="color: red;">websockets are not supported </span></p>');
+              $("#navigation").hide();
+          } else {
+              $('#status').append('<p><span style="color: green;">websockets are supported </span></p>');
+              connect();
+          };
+            /*  $("#connected").hide();
+              $("#content").hide(); */
+      };
+
+      function connect()
+      {
+        /*  wsHost = $("#server").val() */
+        /*  wsHost='ws://localhost:8080/websocket' */
+          wsHost='ws://joqhome.dynamic-dns.net:58080/websocket';
+          websocket = new WebSocket(wsHost);
+          console.log(websocket);
+          websocket.onopen = function(evt) { onOpen(evt) };
+          websocket.onclose = function(evt) { onClose(evt) };
+          websocket.onmessage = function(evt) { onMessage(evt) };
+          websocket.onerror = function(evt) { onError(evt) };
+      };
+
+      function disconnect() {
+          websocket.close();
+      };
+
+      function sendTxt() {
+          if(websocket.readyState == websocket.OPEN){
+              txt = $("#send_txt").val();
+              websocket.send(txt);
+              showScreen('sending: ' + txt);
+          } else {
+               showScreen('websocket is not connected');
+          };
+      };
+
+      function onOpen(evt) {
+          showScreen('<span style="color: green;">CONNECTED </span>');
+          $("#connected").fadeIn('slow');
+          $("#content").fadeIn('slow');
+      };
+
+      function onClose(evt) {
+          showScreen('<span style="color: red;">DISCONNECTED </span>');
+      };
+
+      function onError(evt) {
+          showScreen('<span style="color: red;">ERROR: ' + evt.data+ '</span>');
+      };
+
+      function showScreen(txt) {
+          $('#output').prepend('<p>' + txt + '</p>');
+      };
+
+      function clearScreen(){
+          $('#output').html("");
+      };
+
+
+      function onMessage(evt) {
+         var msg = evt.data.split(":");
+      //  console.log("Message from erlang server");
+    //    console.log(evt.data);
+      //  console.log(msg);
+        switch (msg[1]) {
+            case 'varme_huset':
+                do_varme_huset(msg);
+            break;
+            case 'varme_lillstugan':
+                do_varme_lillstugan(msg);
+            break;
+            case 'lampor_huset':
+                do_lampor_huset(msg);
+            break;
+            case 'lampor_lillstugan':
+                do_lampor_lillstugan(msg);
+            break;
+          default:
+               console.log('unmatched signal',msg[1]);
+        }
+        showScreen('<span style="color: blue;">RESPONSE: ' + evt.data+ '</span>');
+      };
+
+      function button_test(Id){
+        var fun = "button";
+        var args= "["+Id+"]";
+        var msg2erlang = fun.concat(":",args);
+          console.log(Id);
+          if(websocket.readyState == websocket.OPEN){
+              websocket.send(msg2erlang);
+              showScreen('sending: ' + msg2erlang);
+          } else {
+               showScreen('websocket is not connected');
+          };
+      };
+
+      function do_varme_huset(msg){
+        switch  (msg[2]) {
+          case "on":
+              document.getElementById("txt_status_off_varme_huset").innerHTML ="";
+              document.getElementById("txt_status_on_varme_huset").innerHTML ="ON";
+          break;
+          case "off":
+              document.getElementById("txt_status_off_varme_huset").innerHTML ="OFF";
+              document.getElementById("txt_status_on_varme_huset").innerHTML ="";
+          break;
+          default:
+               console.log('unmatched signal',msg[2]);
+          };
+        console.log('do something varme_huset');
+        console.log(msg[1],msg[2]);
+      };
+      function do_varme_lillstugan(msg){
+        switch  (msg[2]) {
+          case "on":
+              document.getElementById("txt_status_off_varme_lillstugan").innerHTML ="";
+              document.getElementById("txt_status_on_varme_lillstugan").innerHTML ="ON";
+          break;
+          case "off":
+              document.getElementById("txt_status_off_varme_lillstugan").innerHTML ="OFF";
+              document.getElementById("txt_status_on_varme_lillstugan").innerHTML ="";
+          break;
+          default:
+               console.log('unmatched signal',msg[2]);
+          };
+        console.log('do something varme_lillstugan');
+        console.log(msg[1],msg[2]);
+      };
+      function do_lampor_huset(msg){
+        switch  (msg[2]) {
+          case "on":
+              document.getElementById("txt_status_off_lampor_huset").innerHTML ="";
+              document.getElementById("txt_status_on_lampor_huset").innerHTML ="ON";
+          break;
+          case "off":
+              document.getElementById("txt_status_off_lampor_huset").innerHTML ="OFF";
+              document.getElementById("txt_status_on_lampor_huset").innerHTML ="";
+          break;
+          default:
+               console.log('unmatched signal',msg[2]);
+          };
+        console.log('do something lampor_huset');
+        console.log(msg[1],msg[2]);
+      };
+      function do_lampor_lillstugan(msg){
+        switch  (msg[2]) {
+          case "on":
+              document.getElementById("txt_status_off_lampor_lillstugan").innerHTML ="";
+              document.getElementById("txt_status_on_lampor_lillstugan").innerHTML ="ON";
+          break;
+          case "off":
+              document.getElementById("txt_status_off_lampor_lillstugan").innerHTML ="OFF";
+              document.getElementById("txt_status_on_lampor_lillstugan").innerHTML ="";
+          break;
+          default:
+               console.log('unmatched signal',msg[2]);
+          };
+        console.log('do something lampor_lillstugan');
+        console.log(msg[1],msg[2]);
+      };
+    </script>
+  </head>
+
+  <body>
+
+    <div id="txt_huset_temp_txt">Huset temp </div>
+    <div id="txt_huset_temp">22</div>
+    <div id="txt_ute_temp_txt">Ute temp </div>
+    <div id="txt_ute_temp">12</div>
+    <div id="txt_lillstugan_temp_txt">Lillstugan temp</div>
+    <div id="txt_lillstugan_temp">18</div>
+
+    <p>
+      <button type="button" id="b_varme_huset" onclick="button_test('varme_huset')">"ON/OFF"</button>
+      <div id="txt_varme_huset">Varme huset</div>
+      <div id="txt_status_on_varme_huset">ON</div>
+      <div id="txt_status_off_varme_huset"></div>
+    </p>
+
+    <p>
+      <button type="button" id="b_varme_lillstugan" onclick="button_test('varme_lillstugan')">"ON/OFF"</button>
+      <div id="txt_varme_lillstugan">Varme Lillstugann</div>
+      <div id="txt_status_on_varme_lillstugan"></div>
+      <div id="txt_status_off_varme_lillstugan">OFF</div>
+    </p>
+
+    <p>
+      <button type="button" id="b_lampor_huset" onclick="button_test('lampor_huset')">"ON/OFF"</button>
+      <div id="txt_lampor_huset">Lampor huset</div>
+      <div id="txt_status_on_lampor_huset"></div>
+      <div id="txt_status_off_lampor_huset">OFF</div>
+    </p>
+
+    <p>
+      <button type="button" id="b_lampor_lillstugan" onclick="button_test('lampor_lillstugan')">"ON/OFF"</button>
+      <div id="txt_lampor_lillstugan">Lampor Lillstugan</div>
+      <div id="txt_status_on_lampor_lillstugan"></div>
+      <div id="txt_status_off_lampor_lillstugan">OFF</div>
+    </p>
+
+  </body>
+  <style>
+  body {margin-left:1em;
+        border-radius:10px;
+        padding:1em;
+        width:500px;
+        height:300px;
+        border: 2px solid black;
+        box-shadow:black 0.2em 0.2em 0.2em;
+      }
+
+      #txt_huset_temp_txt{
+          position:fixed;top:1.5em;left:2em;font-size:1em; color:black;font-weight: bold
+      }
+      #txt_huset_temp{
+          position:fixed;top:1.5em;left:10em;font-size:1em; color:blue;font-weight: bold
+        }
+      #txt_ute_temp_txt{
+          position:fixed;top:3em;left:2em;font-size:1em; color:black;font-weight: bold
+          }
+      #txt_ute_temp{
+        position:fixed;top:3em;left:10em;font-size:1em; color:blue;font-weight: bold
+        }
+      #txt_lillstugan_temp_txt{
+          position:fixed;top:4.5em;left:2em;font-size:1em; color:black;font-weight: bold
+          }
+      #txt_lillstugan_temp{
+        position:fixed;top:4.5em;left:10em;font-size:1em; color:blue;font-weight: bold
+        }
+
+      #b_varme_huset{
+          position:fixed;top:8em;left:18em;
+          font-size:0.8em; color:black;font-weight: bold;
+          background-color:yellow;padding:3px;width:5em;box-shadow:black 0.1em 0.1em 0.1em;border-radius: 5px; margin:0.3em 0;
+      }
+      #txt_varme_huset{
+          position:fixed;top:7em;left:2em;font-size:1em; color:black;font-weight: bold
+      }
+      #txt_status_on_varme_huset{
+          position:fixed;top:7em;left:11em;font-size:1em; color:red;font-weight: bold
+      }
+      #txt_status_off_varme_huset{
+          position:fixed;top:7em;left:11em;font-size:1em; color:black;font-weight: bold
+      }
+
+      #b_varme_lillstugan{
+          position:fixed;top:11em;left:18em;
+          font-size:0.8em; color:black;font-weight: bold;
+          background-color:blue;padding:3px;width:5em;box-shadow:black 0.1em 0.1em 0.1em;border-radius: 5px; margin:0.3em 0;
+      }
+      #txt_varme_lillstugan{
+          position:fixed;top:9.5em;left:2em;font-size:1em; color:black;font-weight: bold
+      }
+      #txt_status_on_varme_lillstugan{
+          position:fixed;top:9.5em;left:11em;font-size:1em; color:red;font-weight: bold
+        }
+      #txt_status_off_varme_lillstugan{
+          position:fixed;top:9.5em;left:11em;font-size:1em; color:black;font-weight: bold
+        }
+
+      #b_lampor_huset{
+          position:fixed;top:14em;left:18em;
+          font-size:0.8em; color:black;font-weight: bold;
+          background-color:green;padding:3px;width:5em;box-shadow:black 0.1em 0.1em 0.1em;border-radius: 5px; margin:0.3em 0;
+      }
+      #txt_lampor_huset{
+          position:fixed;top:11.9em;left:2em;font-size:1em; color:black;font-weight: bold
+      }
+      #txt_status_on_lampor_huset{
+          position:fixed;top:11.9em;left:11em;font-size:1em; color:red;font-weight: bold
+      }
+      #txt_status_off_lampor_huset{
+          position:fixed;top:11.9em;left:11em;font-size:1em; color:black;font-weight: bold
+      }
+
+      #b_lampor_lillstugan{
+          position:fixed;top:17em;left:18em;
+          font-size:0.8em; color:black;font-weight: bold;
+          background-color:pink;padding:3px;width:5em;box-shadow:black 0.1em 0.1em 0.1em;border-radius: 5px; margin:0.3em 0;
+      }
+      #txt_lampor_lillstugan{
+          position:fixed;top:14.2em;left:2em;font-size:1em; color:black;font-weight: bold
+      }
+      #txt_status_on_lampor_lillstugan{
+          position:fixed;top:14.2em;left:11em;font-size:1em; color:red;font-weight: bold
+      }
+      #txt_status_off_lampor_lillstugan{
+          position:fixed;top:14.2em;left:11em;font-size:1em; color:black;font-weight: bold
+      }
+  </style>
+        <! END:      Style: Here you put CSS like structures>
+  <! ------------------------------------------------------------>
+
+</html>

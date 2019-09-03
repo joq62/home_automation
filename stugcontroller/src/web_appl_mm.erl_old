@@ -1,0 +1,24 @@
+-module(web_appl_mm).
+ 
+-export([start/3]).
+
+start(Application,IpAddr,Port)->
+    io:format("Application,IpAddr,Port ~p~n",[{?MODULE,?LINE,Application,IpAddr,Port}]),
+    {ok,Socket}=gen_tcp:connect(IpAddr,Port,[binary,{packet,4}]),
+    io:format("Socket ~p~n",[{?MODULE,?LINE,Socket}]),
+    loop(Socket,Application).
+
+loop(Socket,Application)->
+    receive
+	{tcp,Socket,Event_bin}->
+	    EventStr=binary_to_list(Event_bin),
+	 %   io:format(" ~p~n",[{?MODULE,?LINE,EventStr}]),	    
+	    erlang:apply(Application,browser_event,[EventStr]);
+	{_Pid,{send2browser,Event2Browser}}->
+	     io:format(" ~p~n",[{?MODULE,?LINE,send2browser,Event2Browser}]),
+	    gen_tcp:send(Socket,term_to_binary(Event2Browser));
+	Err ->
+	    io:format(" ~p~n",[{?MODULE,?LINE,error,Err}]),
+	    do_nothing
+    end,
+    loop(Socket,Application).

@@ -1,0 +1,11 @@
+PROJECT = websocket
+PROJECT_DESCRIPTION = Cowboy Websocket example
+PROJECT_VERSION = 1
+
+DEPS = cowboy
+dep_cowboy_commit = master
+
+include ../../erlang.mk
+boot:
+	erlc -o ebin src/*.erl;
+	erl -pa ebin -name a@joqhome.dynamic-dns.net -s boot start

@@ -1,0 +1,29 @@
+-module(ws_mm).
+
+-export([start/1]).
+
+-define(PORT,58089).
+
+
+start(Pid_WS_handler)->
+    io:format("~p~n",[{?MODULE,?LINE,Pid_WS_handler}]),
+    {ok,Listen}=gen_tcp:listen(?PORT,[binary,{packet,4},{reuseaddr,true},
+				      {active,true}]),
+    {ok,Socket}=gen_tcp:accept(Listen),
+    gen_tcp:close(Listen),
+    io:format("~p~n",[{?MODULE,?LINE,Socket}]),
+    loop(Socket,Pid_WS_handler).
+
+loop(Socket,Pid_WS_handler)->
+    receive
+	{tcp,Socket,AppMsgBin}-> %MEssage from Web application 
+	    io:format("~p~n",[{?MODULE,?LINE,tcp,Socket,AppMsgBin}]),
+	    Pid_WS_handler!{msg2browser,AppMsgBin};
+	{Pid_WS_handler,{event2appl,Event}}->
+	    io:format("~p~n",[{?MODULE,?LINE,event2appl,Event}]),
+	    gen_tcp:send(Socket,Event);
+	Err ->
+	    io:format("~p~n",[{?MODULE,?LINE,error,Err}]),
+	    error
+    end,
+    loop(Socket,Pid_WS_handler).

@@ -1,0 +1,10 @@
+all:
+	rm -rf ebin/* src/*~ */src/*~;
+	erlc -o ebin src/*.erl;
+	cd cowboy;
+	erlc -o ebin src/*.erl;
+	cd ..;
+	cd ranch;
+	erlc -o ebin src/*.erl;
+	cp src/*.app ebin;
+	erl -pa ebin -s boot start
